@@ -1,0 +1,24 @@
+import { type NextRequest } from 'next/server'
+import { updateSession } from './lib/supabase/middleware'
+
+export async function middleware(request: NextRequest) {
+  // 환경변수가 설정되지 않은 경우 미들웨어를 건너뜀
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return
+  }
+  
+  return await updateSession(request)
+}
+
+export const config = {
+  matcher: [
+    /*
+     * 다음 경로들을 제외하고 모든 요청 경로에 매칭:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * 또한 api/, robots.txt, 및 다른 정적 파일들을 제외할 수 있습니다.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+}
